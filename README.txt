@@ -5,7 +5,7 @@ Kalau error mungkin connectionnya beda bang, bisa diganti dulu
 
 
 
-1. Untuk akses admin, gunakan user dengan role 'admin'
+1. Untuk akses admin, gunakan user dengan role 'admin' (Atau yg sudah tersedia NIK : 4, Pass : 1)
 
 a. untuk ganti nama dan jabatan, password kosongin saja.
 
