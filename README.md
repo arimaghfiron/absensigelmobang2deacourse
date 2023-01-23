@@ -1,2 +1,0 @@
-# absensigelmobang2deacourse
-TUGAS ABSENSI SEDERHANA YANG RUMIT DARI DEA COURSE :D
