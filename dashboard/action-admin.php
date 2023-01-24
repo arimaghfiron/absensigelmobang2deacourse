@@ -99,6 +99,28 @@ else if(isset($_POST['edit']) &&
       
   }
     
+}else if(isset($_POST['input-absen']) && 
+$_POST['jam-masuk'] != NULL &&
+$_POST['jam-pulang'] != NULL) {
+  
+  $user_id = $_POST['nik'];
+  
+  include("../connection.php");
+  $tgl = $_POST['tgl'];
+  $jam_masuk = $_POST['jam-masuk'];
+  $jam_pulang = $_POST['jam-pulang'];
+  
+  $sql="INSERT INTO absensi (`id`, `user_id`, `tgl`, `jam_masuk`, `jam_keluar`,`req_id`) VALUES (NULL, '$user_id', '$tgl', '$jam_masuk', '$jam_pulang',NULL)";
+
+$result = $db->query($sql);
+
+if ($result === TRUE) {
+  header("location:index-admin.php?menu=data-absensi&message=Data Absensi Karyawan dengan NIK $user_id pada Tanggal $tgl, TELAH DIPERBARUI");
+} else {
+  header("location:index-admin.php?menu=data-absensi&message= Maaf Data Absensi Karyawan dengan NIK $user_id pada Tanggal $tgl, GAGAL DIPERBARUI. HUBUNGI IT SUPPORT !");
+    
+}
+  
 }
 
 else if(isset($_POST['accept'])) {
