@@ -59,10 +59,7 @@ if (
 
                 $intTgl = strtotime($tgl);
                 $stopTgl = $intTgl - 30 * 60 * 60 * 24;
-                $hasil = $db->query($sql);
-                $row = $hasil->fetch_assoc();
-                foreach($row as $data) {   echo $data['user_id'] . ' -'; }
-
+                
 
                 for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
                     $tgljd = date('Y-m-d', $intTgl);
