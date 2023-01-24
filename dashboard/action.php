@@ -9,15 +9,27 @@ if (isset($_POST['absen'])) {
   $tgl = date('Y-m-d');
   $time = date('H:i:s');
 
-  $check_absen = "SELECT * FROM absensi WHERE user_id='$user_id' AND tgl='$tgl'";
+  $check_absen = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE user_id='$user_id' AND tgl='$tgl'";
   $check = $db->query($check_absen);
 
   if ($check->num_rows > 0) {
     // jika user sudah pernah absen di hari ini 👇
-    header("location:index.php");
+    $data = $check->fetch_assoc();
+    if($data['status']=='Pending' || $data['status']=='Reject'){
+      $sql = "UPDATE absensi SET jam_masuk='$time',jam_keluar=NULL WHERE user_id='$user_id' AND tgl='$tgl'";
+      $result = $db->query($sql);
+      if ($result === TRUE) {
+        header("location:index.php?message=TESTES");
+      } else {
+        header("location:index.php?&message=Maaf Absen Masuk Gagal, Hubungi Admin !");
+      }
+    } else {
+      header("location:index.php?message=Data Absensi Anda hari ini sudah ada !");
+      die();
+    }
   } else {
     // jika user belum absen maka dia bisa absen hari ini 👇
-    $sql = "INSERT INTO absensi (`id`, `user_id`, `tgl`, `jam_masuk`, `jam_keluar`) VALUES (NULL, '$user_id', '$tgl', '$time', NULL)";
+    $sql = "INSERT INTO absensi (`id`, `user_id`, `tgl`, `jam_masuk`, `jam_keluar`,`req_id`) VALUES (NULL, '$user_id', '$tgl', '$time', NULL, NULL)";
 
     $result = $db->query($sql);
 

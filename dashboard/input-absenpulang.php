@@ -30,7 +30,31 @@
             echo "SERVER BERMASALAH, HUBUNGI IT SUPPORT !";
         }
         
-    } else {
+    } else if(isset($_GET['NIK-mangkir'])) {
+        include("../connection.php");
+        $NIK = $_GET['NIK-mangkir'];
+        $nama = $_GET['nama-lengkap'];
+        $role = $_GET['role'];
+        $tgl = $_GET['tgl-mangkir'];
+
+        echo '<div class="bform"><form action="action-admin.php" method="POST" class="form">
+            <p>EDIT DATA ABSEN</p>
+                    <div class="inputform"><span>NIK</span>
+                    <input name="nik" placeholder="NIK" readonly type="number" class="login-input" value="'.$NIK.'"/>
+                  </div> <div class="inputform">  <span>Nama Lengkap</span>
+                    <input name="nama_lengkap" placeholder="Nama Lengkap" readonly type="text" class="login-input" value="'.$nama.'"/>
+</div> <div class="inputform"> <span>Jabatan </span>
+                    <input name="jabatan" placeholder="Jabatan" readonly type="text" class="login-input" value="'.$role.'"/>
+</div> <div class="inputform"> <span>Tanggal </span>
+                    <input name="tgl" type="text" readonly value='.$tgl.' class="login-input" />
+</div> <div class="inputform"> <span>Absen Masuk</span>
+                    <input name="jam-masuk" type="time" step=1 class="login-input" />
+</div> <div class="inputform"> <span>Absen Pulang </span>
+ <input name="jam-pulang" type="time" step=1 class="login-input" />
+</div> <div class="btform"><button type="submit" name="input-absen" class="button">SIMPAN</button>
+                    <button type="submit" name="cancel-absen" class="button">BATAL</button></div>
+                </form></div>';
+    }    
+    else {
         header("location:index-admin.php?menu=data-absensi");
     }
-?>
