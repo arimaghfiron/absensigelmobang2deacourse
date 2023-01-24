@@ -59,13 +59,24 @@ if (
 
                 $intTgl = strtotime($tgl);
                 $stopTgl = $intTgl - 30 * 60 * 60 * 24;
-                
 
+                $user = [];
+                $hasil = $db->query($sqluser);
+                while ($data1 = $hasil->fetch_assoc()) {
+                    array_push($user, $data1);
+                }
+                $absen = [];
+                $hasil2 = $db->query($sql);
+                while ($data2 = $hasil2->fetch_assoc()) {
+                    array_push($absen, $data2);
+                }
                 for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
                     $tgljd = date('Y-m-d', $intTgl);
 
-                    $resultuser = $db->query($sqluser);
-                    while ($datauser = $resultuser->fetch_assoc()) {
+                    // $resultuser = $db->query($sqluser);
+                    // while ($datauser = $resultuser->fetch_assoc()) {
+                    foreach ($user as $datauser) {
+
                         echo "<tr class='tr'>";
                         echo "<td class='td'>" . $no++ . "</td>";
                         echo "<td class='td'>" . $datauser['user_id'] . "</td>";
@@ -75,9 +86,10 @@ if (
 
                         $cek = 0;
 
-                        $result = $db->query($sql);
-                        while ($data = $result->fetch_assoc()) {
-                            if ($tgljd == $data['tgl'] && $datauser['user_id']==$data['user_id']) {
+                        // $result = $db->query($sql);
+                        // while ($data = $result->fetch_assoc()) {
+                            foreach ($absen as $data) {
+                            if ($tgljd == $data['tgl'] && $datauser['user_id'] == $data['user_id']) {
                                 echo "<td class='td'>" . $data['jam_masuk'] . "</td>";
                                 echo "<td class='td'>" . $data['jam_keluar'] . "</td>";
                                 echo "<td class='td'>";
@@ -104,7 +116,7 @@ if (
                             } else if (date('D', $intTgl) == "Sat") {
                                 echo "<td class='td'>Libur Hari Sabtu</td><td></td>";
                             } else {
-                                echo "<td class='td'>Mangkir</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-mangkir=" . $datauser['user_id']."&tgl-mangkir=".$tgljd."&nama-lengkap=".$datauser['nama_lengkap'] ."&role=".$datauser['role']."'>Input</a></td>";
+                                echo "<td class='td'>Mangkir</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-mangkir=" . $datauser['user_id'] . "&tgl-mangkir=" . $tgljd . "&nama-lengkap=" . $datauser['nama_lengkap'] . "&role=" . $datauser['role'] . "'>Input</a></td>";
                             }
                         }
                         echo "</tr>";

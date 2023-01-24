@@ -51,11 +51,11 @@
     <table class="table">
       <thead>
         <tr class="tr">
-          <th class="th">No.</th>
-          <th class="th">Tanggal</th>
-          <th class="th">Absen Masuk</th>
-          <th class="th">Absen Pulang</th>
-          <th class="th">Performa</th>
+          <th class="th" width='5%'>No.</th>
+          <th class="th" width='20%'>Tanggal</th>
+          <th class="th" width='25%'>Absen Masuk</th>
+          <th class="th" width='25%'>Absen Pulang</th>
+          <th class="th" width='25%'>Performa</th>
         </tr>
       </thead>
       <tbody>
@@ -65,19 +65,26 @@
         $intTgl = strtotime($tgl);
         $stopTgl = $intTgl - 30 * 60 * 60 * 24;
 
+        $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl <= '$tgl' order by tgl desc";
+        $absen = [];
+        $hasil2 = $db->query($sql);
+        while ($data2 = $hasil2->fetch_assoc()) {
+          array_push($absen, $data2);
+        }
+
         for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
           $tgljd = date('Y-m-d', $intTgl);
 
           echo "<tr class='tr'>";
           echo "<td class='td'>" . $no++ . "</td>";
           echo "<td class='td'> " . $tgljd . " </td>";
-        
+
           $cek = 0;
-        $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl <= '$tgl' order by tgl desc";
-        $result = $db->query($sql);
-          while ($data = $result->fetch_assoc()) {
+          // $result = $db->query($sql);
+          // while ($data = $result->fetch_assoc()) {
+            foreach ($absen as $data) {
             if ($tgljd == $data['tgl']) {
-              
+
               echo "<td class='td'> " . $data['jam_masuk'] . " </td>";
               if (empty($data['jam_keluar']) && !empty($data['jam_masuk'])) {
                 echo "<td class='td'>Belum Absen Pulang</td>";
@@ -91,23 +98,19 @@
               } else {
                 echo "<td class='td'>Unclear</td>";
               }
-              $cek=1;
+              $cek = 1;
               break;
-            } 
-            
+            }
           }
-          if($cek==0){
+          if ($cek == 0) {
             echo "<td class='td'>--:--:--</td><td class='td'>--:--:--</td>";
-            if(date('D', $intTgl)=="Sun"){
+            if (date('D', $intTgl) == "Sun") {
               echo "<td class='td'>Libur Hari Minggu</td>";
-            }
-            else if(date('D', $intTgl)=="Sat"){
+            } else if (date('D', $intTgl) == "Sat") {
               echo "<td class='td'>Libur Hari Sabtu</td>";
-            }
-            else{
+            } else {
               echo "<td class='td'>Mangkir</td>";
             }
-            
           }
           echo "</tr>";
         }
