@@ -1,9 +1,11 @@
 ﻿- ARI RYU MAGHFIRON -
 
-- Mohon Import Database yang tersedia terlebih dulu, karena ada tambahan table. 
+-
+Kalau error mungkin connectionnya beda bang, bisa diganti dulu 
 
 
-1. Untuk akses admin, gunakan user dengan role 'admin' (Atau yg sudah tersedia NIK : 4, Pass : 1)
+
+1. Untuk akses admin, gunakan user dengan role 'admin'
 
 a. untuk ganti nama dan jabatan, password kosongin saja.
 
