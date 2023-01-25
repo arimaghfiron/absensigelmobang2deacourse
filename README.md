@@ -16,7 +16,8 @@ b. untuk sekalian ganti password, tinggal isi semua dengan sesuai.
 2. Maaf CSS Seadanya bang, noob parah 
 
 3. sedikit responsive, belum maksimal 
-5. Fitur pencarian baru bisa per NIK
+5. Fitur pencarian baru bisa per NIK dan rentang tanggal untuk data absen.
+- Data Approval user belum bisa pencarian, Data Approval admin belum bisa pencarian by tanggal atau request id
 
 6. Masih banyak sekali kekurangan 
 
