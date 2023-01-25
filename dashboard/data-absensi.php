@@ -1,4 +1,10 @@
 <?php
+date_default_timezone_set("Asia/Jakarta");
+$tgl = date('Y-m-d');
+
+$intTgl = strtotime($tgl);
+$stopTgl = $intTgl - 30 * 60 * 60 * 24;
+
 if (
     !isset($_GET['submenu']) ||
     $_GET['submenu'] !== "input-absen" &&
@@ -15,6 +21,18 @@ if (
 
         <p>DATA ABSENSI KARYAWAN</p>
         <form action="" method="POST">
+
+            <input name="tgl-awal" type="date" class="login-input" value="<?php if (isset($_POST['tgl-awal'])) {
+                                                                                echo $_POST['tgl-awal'];
+                                                                            } else {
+                                                                                echo date('Y-m-d', $stopTgl);
+                                                                            } ?>">
+            <span style='padding: 0.5rem'>s/d</span>
+            <input name="tgl-akhir" type="date" class="login-input" value="<?php if (isset($_POST['tgl-akhir'])) {
+                                                                                echo $_POST['tgl-akhir'];
+                                                                            } else {
+                                                                                echo date('Y-m-d', $intTgl);
+                                                                            } ?>">
             <input placeholder=" NIK" name="NIK" type="text" class="login-input" value="<?php if (isset($_POST['NIK'])) {
                                                                                             echo $_POST['NIK'];
                                                                                         } ?>">
@@ -41,85 +59,88 @@ if (
                 <?php
 
                 include("../connection.php");
-                date_default_timezone_set("Asia/Jakarta");
-                $tgl = date('Y-m-d');
-                $sql = "SELECT * FROM `users` as a,`absensi` as b LEFT JOIN request as c ON b.req_id=c.req_id WHERE a.user_id=b.user_id AND b.tgl <= '$tgl'";
-                if (isset($_POST['cari']) && $_POST['NIK'] != NULL) {
-                    $NIK = $_POST['NIK'];
-                    $sql = $sql . " AND a.user_id='$NIK'";
-                }
-                $sql = $sql . " ORDER BY b.tgl desc, a.user_id";
+
+                $tgl_awal = date('Y-m-d', $stopTgl);
+                $tgl_akhir = $tgl;
+                $sql = "SELECT * FROM `users` as a,`absensi` as b LEFT JOIN request as c ON b.req_id=c.req_id WHERE a.user_id=b.user_id";
                 $sqluser = "SELECT * FROM users";
-                if (isset($_POST['cari']) && $_POST['NIK'] != NULL) {
-                    $NIKuser = $_POST['NIK'];
-                    $sqluser = $sqluser . " WHERE user_id='$NIKuser'";
+                if (isset($_POST['cari'])) {
+                    if ($_POST['NIK'] != NULL) {
+                        $NIK = $_POST['NIK'];
+                        $sql = $sql . " AND a.user_id='$NIK'";
+                        $sqluser = $sqluser . " WHERE user_id='$NIK'";
+                    }
+                    if ($_POST['tgl-awal'] != NULL && $_POST['tgl-akhir'] != NULL) {
+                        $tgl_awal = $_POST['tgl-awal'];
+                        $tgl_akhir = $_POST['tgl-akhir'];
+                        $stopTgl = strtotime($tgl_awal);
+                        $intTgl = strtotime($tgl_akhir);
+                        if ($stopTgl > $intTgl) {
+                            header('location:index-admin.php?menu=data-absensi&message=Tanggal Awal melebihi Tanggal Akhir, Mohon masukkan data tanggal dengan benar !');
+                            die();
+                        }
+                    } else {
+                        header('location:index-admin.php?menu=data-absensi&message=Data Tanggal KOSONG, Mohon masukkan data tanggal dengan benar ! !');
+                        die();
+                    }
                 }
+                $sql = $sql . " AND b.tgl BETWEEN '$tgl_awal' AND '$tgl_akhir' ORDER BY b.tgl desc, a.user_id";
+
+                $hasil = $db->query($sql);
+                $absen = mysqli_fetch_all($hasil);
+
+                $hasil = $db->query($sqluser);
+                $user = mysqli_fetch_all($hasil);
 
                 $no = 1;
 
-                $intTgl = strtotime($tgl);
-                $stopTgl = $intTgl - 30 * 60 * 60 * 24;
-
-                $user = [];
-                $hasil = $db->query($sqluser);
-                while ($data1 = $hasil->fetch_assoc()) {
-                    array_push($user, $data1);
-                }
-                $absen = [];
-                $hasil2 = $db->query($sql);
-                while ($data2 = $hasil2->fetch_assoc()) {
-                    array_push($absen, $data2);
-                }
                 for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
                     $tgljd = date('Y-m-d', $intTgl);
 
-                    // $resultuser = $db->query($sqluser);
-                    // while ($datauser = $resultuser->fetch_assoc()) {
                     foreach ($user as $datauser) {
+                        if ($intTgl > strtotime($datauser[5])) {
 
-                        echo "<tr class='tr'>";
-                        echo "<td class='td'>" . $no++ . "</td>";
-                        echo "<td class='td'>" . $datauser['user_id'] . "</td>";
-                        echo "<td class='td'>" . $datauser['nama_lengkap'] . "</td>";
-                        echo "<td class='td'>" . $datauser['role'] . "</td>";
-                        echo "<td class='td'> " . $tgljd . " </td>";
+                            echo "<tr class='tr'>";
+                            echo "<td class='td'>" . $no++ . "</td>";
+                            echo "<td class='td'>" . $datauser[1] . "</td>";
+                            echo "<td class='td'>" . $datauser[3] . "</td>";
+                            echo "<td class='td'>" . $datauser[4] . "</td>";
+                            echo "<td class='td'> " . $tgljd . " </td>";
 
-                        $cek = 0;
-
-                        // $result = $db->query($sql);
-                        // while ($data = $result->fetch_assoc()) {
+                            $cek = 0;
                             foreach ($absen as $data) {
-                            if ($tgljd == $data['tgl'] && $datauser['user_id'] == $data['user_id']) {
-                                echo "<td class='td'>" . $data['jam_masuk'] . "</td>";
-                                echo "<td class='td'>" . $data['jam_keluar'] . "</td>";
-                                echo "<td class='td'>";
-                                if ($data['jam_keluar'] == NULL) {
-                                    if ($data['jam_masuk'] == NULL) {
-                                        echo "Mangkir</td><td><a href='index-admin.php?menu=data-absensi&submenu=input-absen&NIK-absen=" . $data['user_id'] . "&tgl-absen=" . $data['tgl'] . "'>Input</a>";
+                                if ($tgljd == $data[9] && $datauser[1] == $data[1]) {
+                                    echo "<td class='td'>" . $data[10] . "</td>";
+                                    echo "<td class='td'>" . $data[11] . "</td>";
+                                    echo "<td class='td'>";
+                                    if ($data[10] == NULL) {
+                                        if ($data[11] == NULL) {
+                                            echo "Mangkir</td><td><a href='index-admin.php?menu=data-absensi&submenu=input-absen&NIK-absen=" . $data[1] . "&tgl-absen=" . $data[9] . "'>Input</a>";
+                                        } else {
+                                            echo "Belum Absen Pulang</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-absen=" . $datauser[1] . "&tgl-absen=" . $data[9] . "&jam-masuk=" . $data[10] . "'>Input</a>";
+                                        }
+                                    } else if ($data[17] == 'Accept') {
+                                        echo $data[15] . "</td><td>";
                                     } else {
-                                        echo "Belum Absen Pulang</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-absen=" . $datauser['user_id'] . "&tgl-absen=" . $data['tgl'] . "&jam-masuk=" . $data['jam_masuk'] . "'>Input</a>";
+                                        echo "Clear</td><td>";
                                     }
-                                } else if ($data['status'] == 'Accept') {
-                                    echo $data['jenis'] . "</td><td>";
-                                } else {
-                                    echo "Clear</td><td>";
+                                    echo "</td>";
+                                    $cek = 1;
+                                    break;
                                 }
-                                echo "</td>";
-                                $cek = 1;
-                                break;
                             }
-                        }
-                        if ($cek == 0) {
-                            echo "<td class='td'>--:--:--</td><td class='td'>--:--:--</td>";
-                            if (date('D', $intTgl) == "Sun") {
-                                echo "<td class='td'>Libur Hari Minggu</td><td></td>";
-                            } else if (date('D', $intTgl) == "Sat") {
-                                echo "<td class='td'>Libur Hari Sabtu</td><td></td>";
-                            } else {
-                                echo "<td class='td'>Mangkir</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-mangkir=" . $datauser['user_id'] . "&tgl-mangkir=" . $tgljd . "&nama-lengkap=" . $datauser['nama_lengkap'] . "&role=" . $datauser['role'] . "'>Input</a></td>";
+                            if ($cek == 0) {
+                                echo "<td class='td'>--:--:--</td><td class='td'>--:--:--</td>";
+                                if (date('D', $intTgl) == "Sun") {
+                                    echo "<td class='td'>Libur Hari Minggu</td><td></td>";
+                                } else if (date('D', $intTgl) == "Sat") {
+                                    echo "<td class='td'>Libur Hari Sabtu</td><td></td>";
+                                } else {
+                                    echo "<td class='td'>Mangkir</td><td><a class='bt1' href='index-admin.php?menu=data-absensi&submenu=input-absenpulang&NIK-mangkir=" . $datauser[1] . "&tgl-mangkir=" . $tgljd . "&nama-lengkap=" . $datauser[3] . "&role=" . $datauser[4] . "'>Input</a></td>";
+                                }
                             }
+                            echo "</tr>";
                         }
-                        echo "</tr>";
                     }
                 }
                 ?>
