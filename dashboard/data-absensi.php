@@ -84,6 +84,7 @@ if (
                         die();
                     }
                 }
+
                 $sql = $sql . " AND b.tgl BETWEEN '$tgl_awal' AND '$tgl_akhir' ORDER BY b.tgl desc, a.user_id";
 
                 $hasil = $db->query($sql);
@@ -94,11 +95,14 @@ if (
 
                 $no = 1;
 
+
                 for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
                     $tgljd = date('Y-m-d', $intTgl);
 
                     foreach ($user as $datauser) {
+
                         if ($intTgl > strtotime($datauser[5])) {
+
 
                             echo "<tr class='tr'>";
                             echo "<td class='td'>" . $no++ . "</td>";
@@ -107,8 +111,10 @@ if (
                             echo "<td class='td'>" . $datauser[4] . "</td>";
                             echo "<td class='td'> " . $tgljd . " </td>";
 
+
                             $cek = 0;
                             foreach ($absen as $data) {
+
                                 if ($tgljd == $data[9] && $datauser[1] == $data[1]) {
                                     echo "<td class='td'>" . $data[10] . "</td>";
                                     echo "<td class='td'>" . $data[11] . "</td>";
@@ -140,7 +146,9 @@ if (
                                 }
                             }
                             echo "</tr>";
+
                         }
+
                     }
                 }
                 ?>
