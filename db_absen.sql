@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Waktu pembuatan: 21 Jan 2023 pada 14.35
+-- Waktu pembuatan: 24 Jan 2023 pada 11.00
 -- Versi server: 10.1.38-MariaDB
 -- Versi PHP: 7.3.2
 
@@ -31,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `absensi` (
   `id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `tgl` varchar(255) DEFAULT NULL,
+  `tgl` date DEFAULT NULL,
   `jam_masuk` varchar(255) DEFAULT NULL,
   `jam_keluar` varchar(255) DEFAULT NULL,
   `req_id` int(11) DEFAULT NULL
@@ -49,7 +49,14 @@ INSERT INTO `absensi` (`id`, `user_id`, `tgl`, `jam_masuk`, `jam_keluar`, `req_i
 (20, 4, '2023-01-13', '--:--:--', '--:--:--', 1),
 (21, 5, '2023-01-21', '18:51:33', '18:51:35', NULL),
 (23, 5, '2023-01-22', '--:--:--', '--:--:--', 3),
-(24, 4, '2023-01-27', '--:--:--', '--:--:--', 4);
+(24, 4, '2023-01-27', '--:--:--', '--:--:--', 4),
+(25, 3, '2023-01-21', '20:57:32', '20:57:52', NULL),
+(26, 4, '2023-01-22', '17:43:15', '17:43:17', NULL),
+(27, 6, '2023-01-22', '17:55:38', '18:09:27', 5),
+(28, 6, '2023-01-23', '18:22:07', '18:22:09', 6),
+(29, 3, '2023-01-23', '20:11:30', '05:41:46', NULL),
+(30, 4, '2023-01-23', '21:52:52', '21:52:56', NULL),
+(31, 1, '2023-01-24', '16:59:58', '17:00:02', NULL);
 
 -- --------------------------------------------------------
 
@@ -72,7 +79,9 @@ CREATE TABLE `request` (
 INSERT INTO `request` (`id`, `req_id`, `jenis`, `keterangan`, `status`) VALUES
 (2, 1, 'Cuti Tahunan', 'sakt', 'Accept'),
 (4, 3, 'Cuti Tahunan', 'Saudara Menikah', 'Accept'),
-(5, 4, 'Cuti Tahunan', 'Tak Tahu', 'Reject');
+(5, 4, 'Cuti Tahunan', 'Tak Tahu', 'Reject'),
+(6, 5, 'Cuti Tahunan', 'testets', 'Reject'),
+(7, 6, 'Cuti Tahunan', 'tetetet', 'Reject');
 
 -- --------------------------------------------------------
 
@@ -85,17 +94,21 @@ CREATE TABLE `users` (
   `user_id` int(11) NOT NULL,
   `password` varchar(255) NOT NULL,
   `nama_lengkap` varchar(255) NOT NULL,
-  `role` varchar(255) NOT NULL
+  `role` varchar(255) NOT NULL,
+  `masuk_kerja` date DEFAULT NULL,
+  `keluar_kerja` date DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data untuk tabel `users`
 --
 
-INSERT INTO `users` (`id`, `user_id`, `password`, `nama_lengkap`, `role`) VALUES
-(23, 3, '1', '65456', '1231'),
-(24, 4, '1', '1', 'admin'),
-(25, 5, '1', 'ARI MAGHFIRON', 'AREA MANAGER');
+INSERT INTO `users` (`id`, `user_id`, `password`, `nama_lengkap`, `role`, `masuk_kerja`, `keluar_kerja`) VALUES
+(23, 3, '1', '65456', '1231', '2023-01-17', NULL),
+(24, 4, '1', '1', 'admin', '2022-12-01', NULL),
+(25, 5, '1', 'ARI MAGHFIRON', 'AREA MANAGER', '2023-01-23', NULL),
+(26, 6, '1', 'Ryu', 'Supervisor', '2023-01-01', NULL),
+(27, 1, '1', 'Ryu Kojiro', 'admin', '2023-01-18', NULL);
 
 --
 -- Indexes for dumped tables
@@ -131,19 +144,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT untuk tabel `absensi`
 --
 ALTER TABLE `absensi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
 
 --
 -- AUTO_INCREMENT untuk tabel `request`
 --
 ALTER TABLE `request`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT untuk tabel `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- Ketidakleluasaan untuk tabel pelimpahan (Dumped Tables)
