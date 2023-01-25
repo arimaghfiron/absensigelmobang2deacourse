@@ -6,7 +6,7 @@ TUGAS ABSENSI SEDERHANA YANG RUMIT DARI DEA COURSE :D
 - Mohon Import Database yang tersedia terlebih dulu, karena ada tambahan table. 
 
 
-1. Untuk akses admin, gunakan user dengan role 'admin' (Atau yg sudah tersedia NIK : 4, Pass : 1)
+1. Untuk akses admin, gunakan user dengan role 'admin' (Atau yg sudah tersedia NIK : 1, Pass : 1)
 
 a. untuk ganti nama dan jabatan, password kosongin saja.
 
