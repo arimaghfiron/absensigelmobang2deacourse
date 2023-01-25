@@ -33,7 +33,7 @@ if (
                                                                             } else {
                                                                                 echo date('Y-m-d', $intTgl);
                                                                             } ?>">
-            <input placeholder=" NIK" name="NIK" type="text" class="login-input" value="<?php if (isset($_POST['NIK'])) {
+            <input placeholder=" NIK/Nama/Jabatan" name="NIK" type="text" class="login-input" value="<?php if (isset($_POST['NIK'])) {
                                                                                             echo $_POST['NIK'];
                                                                                         } ?>">
             <button type="submit" name="cari">Cari</button>
@@ -68,7 +68,7 @@ if (
                     if ($_POST['NIK'] != NULL) {
                         $NIK = $_POST['NIK'];
                         $sql = $sql . " AND a.user_id='$NIK'";
-                        $sqluser = $sqluser . " WHERE user_id='$NIK'";
+                        $sqluser = $sqluser . " WHERE user_id='$NIK' OR nama_lengkap LIKE '%$NIK%' OR role LIKE '%$NIK%'";
                     }
                     if ($_POST['tgl-awal'] != NULL && $_POST['tgl-akhir'] != NULL) {
                         $tgl_awal = $_POST['tgl-awal'];
@@ -95,14 +95,18 @@ if (
 
                 $no = 1;
 
-
                 for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
                     $tgljd = date('Y-m-d', $intTgl);
 
                     foreach ($user as $datauser) {
+                        
+                        $tglkeluar = strtotime($datauser[6]);
+                        if($tglkeluar == false){
+                            $tglkeluar = $intTgl+60 * 60 * 24;
+                        }
 
-                        if ($intTgl > strtotime($datauser[5])) {
-
+                        if ($intTgl > strtotime($datauser[5]) && $intTgl < $tglkeluar) {
+                            
 
                             echo "<tr class='tr'>";
                             echo "<td class='td'>" . $no++ . "</td>";

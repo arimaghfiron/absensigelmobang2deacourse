@@ -225,6 +225,12 @@ td a {
 .bt2{
   background-color: #f80000;
 }
+.offbtn{
+  background-color: #333;
+    pointer-events: none;
+    cursor: default;
+  
+}
 
 
 ::-webkit-scrollbar {
@@ -277,6 +283,8 @@ td a {
   flex-flow: row wrap;
   justify-content: right;
 }
+
+
 
 
 /* MEDIA QUERIES */

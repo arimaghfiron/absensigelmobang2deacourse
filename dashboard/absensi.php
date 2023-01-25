@@ -109,7 +109,7 @@
 
         for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
           $tgljd = date('Y-m-d', $intTgl);
-          
+
           if ($intTgl > strtotime($datauser[5])) {
             echo "<tr class='tr'>";
             echo "<td class='td'>" . $no++ . "</td>";
