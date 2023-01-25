@@ -66,53 +66,57 @@
         $stopTgl = $intTgl - 30 * 60 * 60 * 24;
 
         $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl <= '$tgl' order by tgl desc";
-        $absen = [];
-        $hasil2 = $db->query($sql);
-        while ($data2 = $hasil2->fetch_assoc()) {
-          array_push($absen, $data2);
-        }
+        $hasil = $db->query($sql);
+        $absen = mysqli_fetch_all($hasil);
+
+        $sql = "SELECT * FROM users WHERE user_id='$user_id'";
+        $hasil = $db->query($sql);
+        $datauser = mysqli_fetch_row($hasil);
 
         for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
           $tgljd = date('Y-m-d', $intTgl);
+          
+          if ($intTgl > strtotime($datauser[5])) {
+            echo "<tr class='tr'>";
+            echo "<td class='td'>" . $no++ . "</td>";
+            echo "<td class='td'> " . $tgljd . " </td>";
 
-          echo "<tr class='tr'>";
-          echo "<td class='td'>" . $no++ . "</td>";
-          echo "<td class='td'> " . $tgljd . " </td>";
-
-          $cek = 0;
-          // $result = $db->query($sql);
-          // while ($data = $result->fetch_assoc()) {
+            $cek = 0;
             foreach ($absen as $data) {
-            if ($tgljd == $data['tgl']) {
+              
+              if ($tgljd == $data[2]) {
 
-              echo "<td class='td'> " . $data['jam_masuk'] . " </td>";
-              if (empty($data['jam_keluar']) && !empty($data['jam_masuk'])) {
-                echo "<td class='td'>Belum Absen Pulang</td>";
-              } else {
-                echo "<td class='td'> " . $data['jam_keluar'] . " </td>";
+                echo "<td class='td'> " . $data[3] . " </td>";
+                if (empty($data[4]) && !empty($data[3])) {
+                  echo "<td class='td'>Belum Absen Pulang</td>";
+                } else {
+                  echo "<td class='td'> " . $data[4] . " </td>";
+                }
+                if ($data[10] == 'Accept') {
+                  echo "<td class='td'>" . $data[8] . "</td>";
+                } else if (!empty($data[3]) && strtotime($data[4]) != NULL) {
+                  echo "<td class='td'>Clear</td>";
+                } else {
+                  echo "<td class='td'>Unclear</td>";
+                }
+                $cek = 1;
+                break;
               }
-              if ($data['status'] == 'Accept') {
-                echo "<td class='td'>" . $data['jenis'] . "</td>";
-              } else if (!empty($data['jam_masuk']) && strtotime($data['jam_keluar']) != NULL) {
-                echo "<td class='td'>Clear</td>";
+            }
+            if ($cek == 0) {
+              echo "<td class='td'>--:--:--</td><td class='td'>--:--:--</td>";
+              if (date('D', $intTgl) == "Sun") {
+                echo "<td class='td'>Libur Hari Minggu</td>";
+              } else if (date('D', $intTgl) == "Sat") {
+                echo "<td class='td'>Libur Hari Sabtu</td>";
               } else {
-                echo "<td class='td'>Unclear</td>";
+                echo "<td class='td'>Mangkir</td>";
               }
-              $cek = 1;
-              break;
             }
+            echo "</tr>";
+          } else {
+            break;
           }
-          if ($cek == 0) {
-            echo "<td class='td'>--:--:--</td><td class='td'>--:--:--</td>";
-            if (date('D', $intTgl) == "Sun") {
-              echo "<td class='td'>Libur Hari Minggu</td>";
-            } else if (date('D', $intTgl) == "Sat") {
-              echo "<td class='td'>Libur Hari Sabtu</td>";
-            } else {
-              echo "<td class='td'>Mangkir</td>";
-            }
-          }
-          echo "</tr>";
         }
         ?>
       </tbody>
