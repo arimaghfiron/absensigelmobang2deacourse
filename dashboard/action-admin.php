@@ -171,6 +171,8 @@ else{
     header("location:index-admin.php?menu=data-karyawan");
 }else if(isset($_POST['edit-absen'])){
     header("location:index-admin.php?menu=data-absensi");
+}else if(isset($_POST['input-absen'])){
+    header("location:index-admin.php?menu=data-absensi");
 }
 else if(isset($_POST['cancel'])){
   header("location:index-admin.php?menu=data-karyawan");
