@@ -15,7 +15,17 @@
     } else {
       echo "<p>Maaf terjadi kesalahan</p>";
     }
+
   }
+  
+  $sql = "SELECT * FROM users WHERE user_id='$user_id'";
+  $hasil = $db->query($sql);
+  $datauser = mysqli_fetch_row($hasil);
+
+  if (isset($_POST['semua'])) {
+    $stopTgl = strtotime($datauser[5]);
+  }
+  
   $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl='$tgl'";
   $result = $db->query($sql);
 
@@ -50,13 +60,20 @@
     <p>DATA ABSENSI</p>
     <form action="" method="POST">
 
-      <input name="tgl-awal" type="date" class="login-input" value="<?php if (isset($_POST['tgl-awal'])) {
+
+      <input name="tgl-awal" type="date" class="login-input" value="<?php if(isset($_POST['semua'])){
+                echo date('Y-m-d', $stopTgl);
+            } else if (isset($_POST['tgl-awal'])) {
+
                                                                       echo $_POST['tgl-awal'];
                                                                     } else {
                                                                       echo date('Y-m-d', $stopTgl);
                                                                     } ?>">
       <span style='padding: 0.5rem'>s/d</span>
-      <input name="tgl-akhir" type="date" class="login-input" value="<?php if (isset($_POST['tgl-akhir'])) {
+
+      <input name="tgl-akhir" type="date" class="login-input" value="<?php if(isset($_POST['semua'])){
+                echo $tgl;
+            } else if (isset($_POST['tgl-akhir'])) {
                                                                         echo $_POST['tgl-akhir'];
                                                                       } else {
                                                                         echo date('Y-m-d', $intTgl);
@@ -103,14 +120,10 @@
         $hasil = $db->query($sql);
         $absen = mysqli_fetch_all($hasil);
 
-        $sql = "SELECT * FROM users WHERE user_id='$user_id'";
-        $hasil = $db->query($sql);
-        $datauser = mysqli_fetch_row($hasil);
-
         for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
           $tgljd = date('Y-m-d', $intTgl);
 
-          if ($intTgl > strtotime($datauser[5])) {
+          if ($intTgl >= strtotime($datauser[5])) {
             echo "<tr class='tr'>";
             echo "<td class='td'>" . $no++ . "</td>";
             echo "<td class='td'> " . $tgljd . " </td>";
@@ -119,7 +132,6 @@
             foreach ($absen as $data) {
 
               if ($tgljd == $data[2]) {
-
                 echo "<td class='td'> " . $data[3] . " </td>";
                 if (empty($data[4]) && !empty($data[3])) {
                   echo "<td class='td'>Belum Absen Pulang</td>";
@@ -128,9 +140,15 @@
                 }
                 if ($data[10] == 'Accept') {
                   echo "<td class='td'>" . $data[8] . "</td>";
-                } else if (!empty($data[3]) && strtotime($data[4]) != NULL) {
+                }
+                else if (strtotime($data[3]) == NULL && strtotime($data[4]) == NULL) {
+                   if($data[10] == 'Pending' || $data[10] == 'Reject') {
+                    echo "<td class='td'>Mangkir</td>";
+                  } 
+                }
+                else if (!empty($data[3]) && strtotime($data[4]) != NULL) {
                   echo "<td class='td'>Clear</td>";
-                } else {
+                } else{
                   echo "<td class='td'>Unclear</td>";
                 }
                 $cek = 1;

@@ -188,5 +188,7 @@ else if (
     header("location:index-admin.php?menu=data-karyawan");
   } else if (isset($_POST['cancel-absen'])) {
     header("location:index-admin.php?menu=data-absensi");
+  } else {
+    header("location:index-admin.php");
   }
 }
