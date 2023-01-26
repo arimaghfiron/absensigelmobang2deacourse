@@ -17,6 +17,14 @@
                     <span>Jabatan</span>
                     <input name="jabatan" placeholder="Jabatan" type="text" class="login-input" value="'.$data["role"].'"/>
 </div>
+<div class="inputform">
+                    <span>Masuk Kerja</span>
+                    <input name="masuk-kerja" type="date" class="login-input" value="'.$data["masuk_kerja"].'"/>
+</div>
+<div class="inputform">
+                    <span>Keluar Kerja</span>
+                    <input name="keluar-kerja" type="date" class="login-input" value="'.$data["keluar_kerja"].'"/>
+</div>
                     <div class="inputform"><span>Password Lama</span>
                     <input name="password0" placeholder="Old Password" type="password" class="login-input" />
 </div>

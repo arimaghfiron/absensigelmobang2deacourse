@@ -25,6 +25,11 @@
 <div class="table">
     <div class="table_header"> 
     <p>DATA ABSENSI</p>
+    <form action="" method="POST">
+            <input placeholder=" Pencarian" name="NIK" type="text" class="login-input" value="<?php if(isset($_POST['NIK'])){echo $_POST['NIK'];} ?>">
+    <button type="submit" name="cari">Cari</button>
+    <button type="submit" name="semua">Semua</button>
+    </form>
     </div>
     <div class="table_section">
 <table class="table">
@@ -42,7 +47,12 @@
 <?php
     include("../connection.php");
 
-  $sql = "SELECT * FROM absensi as a, request as b WHERE a.req_id=b.req_id AND a.user_id='$user_id' order by a.tgl desc";
+  $sql = "SELECT * FROM absensi as a, request as b WHERE a.req_id=b.req_id AND a.user_id='$user_id'";
+  if (isset($_POST['cari']) && $_POST['NIK'] != NULL) { 
+    $NIK = $_POST['NIK'];
+  $sql = $sql." AND (a.req_id='$NIK' OR b.status LIKE '%$NIK%' OR b.jenis LIKE '%$NIK%' OR a.tgl LIKE '%$NIK%' OR b.keterangan LIKE '%$NIK%')";
+}
+$sql = $sql." order by a.tgl desc";
   $result = $db->query($sql);
      $no = 1;
   while ($data = $result->fetch_assoc()) {

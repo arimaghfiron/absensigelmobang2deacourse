@@ -4,7 +4,7 @@
 
 <p>DATA PANGAJUAN CUTI KARYAWAN</p>
       <form action="" method="POST">
-            <input placeholder=" NIK" name="NIK" type="text" class="login-input" value="<?php if(isset($_POST['NIK'])){echo $_POST['NIK'];} ?>" >
+            <input placeholder=" Pencarian" name="NIK" type="text" class="login-input" value="<?php if(isset($_POST['NIK'])){echo $_POST['NIK'];} ?>" >
     <button type="submit" name="cari">Cari</button>
     <button type="submit" name="semua">Semua</button>
     </form>
@@ -32,11 +32,7 @@ include("../connection.php");
 $sql = "SELECT * FROM `users` as a,`absensi` as b, request as c WHERE a.user_id=b.user_id AND b.req_id=c.req_id";
 if (isset($_POST['cari']) && $_POST['NIK'] != NULL) { 
         $NIK = $_POST['NIK'];
-    
-      
-              
-    
-    $sql = $sql." AND a.user_id='$NIK'";
+    $sql = $sql." AND (a.user_id='$NIK' OR b.req_id='$NIK' OR c.status LIKE '%$NIK%' OR c.jenis LIKE '%$NIK%' OR b.tgl LIKE '%$NIK%' OR c.keterangan LIKE '%$NIK%' OR a.nama_lengkap LIKE '%$NIK%' OR a.role LIKE '%$NIK%')";
 }
     $sql = $sql." ORDER BY c.req_id desc";
       $result = $db->query($sql);

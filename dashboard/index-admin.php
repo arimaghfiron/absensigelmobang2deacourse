@@ -34,6 +34,7 @@ if (isset($_GET['logout'])) {
     
     <script src="https://unpkg.com/feather-icons"></script>
   <link rel="stylesheet" href="dashboard.css" />
+  <link rel="icon" href="../img/ryu.png">
   <title>ADMIN</title>
 </head>
 
