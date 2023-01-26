@@ -5,6 +5,8 @@
   $user_id = $_SESSION['user_id'];
   $tgl = date('Y-m-d');
   $time = date('H:i:s');
+  $intTgl = strtotime($tgl);
+  $stopTgl = $intTgl - 30 * 60 * 60 * 24;
 
   if (isset($_POST['clockout'])) {
     $sql = "UPDATE absensi SET jam_keluar='$time' WHERE user_id='$user_id' AND tgl='$tgl'";
@@ -13,7 +15,17 @@
     } else {
       echo "<p>Maaf terjadi kesalahan</p>";
     }
+
   }
+  
+  $sql = "SELECT * FROM users WHERE user_id='$user_id'";
+  $hasil = $db->query($sql);
+  $datauser = mysqli_fetch_row($hasil);
+
+  if (isset($_POST['semua'])) {
+    $stopTgl = strtotime($datauser[5]);
+  }
+  
   $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl='$tgl'";
   $result = $db->query($sql);
 
@@ -46,6 +58,26 @@
 <div class="table">
   <div class="table_header">
     <p>DATA ABSENSI</p>
+    <form action="" method="POST">
+
+      <input name="tgl-awal" type="date" class="login-input" value="<?php if(isset($_POST['semua'])){
+                echo date('Y-m-d', $stopTgl);
+            } else if (isset($_POST['tgl-awal'])) {
+                                                                      echo $_POST['tgl-awal'];
+                                                                    } else {
+                                                                      echo date('Y-m-d', $stopTgl);
+                                                                    } ?>">
+      <span style='padding: 0.5rem'>s/d</span>
+      <input name="tgl-akhir" type="date" class="login-input" value="<?php if(isset($_POST['semua'])){
+                echo $tgl;
+            } else if (isset($_POST['tgl-akhir'])) {
+                                                                        echo $_POST['tgl-akhir'];
+                                                                      } else {
+                                                                        echo date('Y-m-d', $intTgl);
+                                                                      } ?>">
+      <button type="submit" name="cari">Cari</button>
+      <button type="submit" name="semua">Semua</button>
+    </form>
   </div>
   <div class="table_section">
     <table class="table">
@@ -62,20 +94,32 @@
         <?php
         $no = 1;
 
-        $intTgl = strtotime($tgl);
-        $stopTgl = $intTgl - 30 * 60 * 60 * 24;
+        $tgl_awal = date('Y-m-d', $stopTgl);
+        $tgl_akhir = $tgl;
 
-        $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl <= '$tgl' order by tgl desc";
+        if (isset($_POST['cari'])) {
+          if ($_POST['tgl-awal'] != NULL && $_POST['tgl-akhir'] != NULL) {
+            $tgl_awal = $_POST['tgl-awal'];
+            $tgl_akhir = $_POST['tgl-akhir'];
+            $stopTgl = strtotime($tgl_awal);
+            $intTgl = strtotime($tgl_akhir);
+            if ($stopTgl > $intTgl) {
+              header('location:index.php?message=Tanggal Awal melebihi Tanggal Akhir, Mohon masukkan data tanggal dengan benar !');
+              die();
+            }
+          } else {
+            header('location:index.php?message=Data Tanggal KOSONG, Mohon masukkan data tanggal dengan benar ! !');
+            die();
+          }
+        }
+        $sql = "SELECT * FROM absensi as a LEFT JOIN request as b ON a.req_id=b.req_id WHERE a.user_id='$user_id' AND a.tgl BETWEEN '$tgl_awal' AND '$tgl_akhir' ORDER BY a.tgl desc";
+
         $hasil = $db->query($sql);
         $absen = mysqli_fetch_all($hasil);
 
-        $sql = "SELECT * FROM users WHERE user_id='$user_id'";
-        $hasil = $db->query($sql);
-        $datauser = mysqli_fetch_row($hasil);
-
         for ($intTgl; $intTgl >= $stopTgl; $intTgl -= 60 * 60 * 24) {
           $tgljd = date('Y-m-d', $intTgl);
-          
+
           if ($intTgl > strtotime($datauser[5])) {
             echo "<tr class='tr'>";
             echo "<td class='td'>" . $no++ . "</td>";
@@ -83,7 +127,7 @@
 
             $cek = 0;
             foreach ($absen as $data) {
-              
+
               if ($tgljd == $data[2]) {
 
                 echo "<td class='td'> " . $data[3] . " </td>";
